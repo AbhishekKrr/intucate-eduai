@@ -2,6 +2,8 @@
 
 Flask + MongoDB + Groq LLM Application for the Intucate Full Stack Developer case study.
 
+**Live:** https://intucate-eduai.onrender.com
+
 ---
 
 ## Tech Stack
@@ -85,6 +87,8 @@ Open **http://127.0.0.1:5000** in your browser.
 ---
 
 ## API Endpoints
+
+Base URL: `https://intucate-eduai.onrender.com`
 
 POSTs to `/ask` return a single question.
 
