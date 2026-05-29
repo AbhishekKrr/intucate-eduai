@@ -1,6 +1,6 @@
 # EduAI — Education Assistant
 
-A Flask + MongoDB + Groq LLM application built for the Intucate Full Stack Developer case study.
+Flask + MongoDB + Groq LLM Application for the Intucate Full Stack Developer case study.
 
 ---
 
@@ -11,7 +11,8 @@ A Flask + MongoDB + Groq LLM application built for the Intucate Full Stack Devel
 | Backend  | Python 3, Flask                     |
 | Database | MongoDB Atlas (pymongo)             |
 | LLM      | Groq API — Llama 3.3 70B Versatile  |
-| Frontend | Vanilla HTML/CSS/JS (served by Flask) |
+
+The front-end is served with Flask, and is a vanilla HTML/CSS/JS application.
 
 ---
 
@@ -32,13 +33,13 @@ intucate-fsd/
 
 ## Setup & Run Locally
 
-### 1. Clone / open the project
+### 1. Duplicate / open project
 
 ```bash
 cd intucate-fsd
 ```
 
-### 2. Create and activate a virtual environment
+### 2. Create and activate a virtual environment.
 
 ```bash
 python -m venv venv
@@ -54,7 +55,7 @@ pip install -r requirements.txt
 
 ### 4. Configure environment variables
 
-Create a `.env` file in the project root:
+In root directory create a `.env` file:
 
 ```
 GROQ_API_KEY=your_groq_api_key_here
@@ -62,11 +63,12 @@ MONGO_URI=mongodb+srv://<user>:<password>@cluster.mongodb.net/?appName=Cluster0
 ```
 
 - Get a free Groq API key at: https://console.groq.com
-- MongoDB Atlas free tier works fine.
+
+If you use the free tier of MongoDB Atlas, it's fine.
 
 ### 5. Seed the database
 
-Inserts the `Education_Prompt` document into the `prompts` collection (run once):
+Adds the file `Education_Prompt` to the collection `prompts` (one time only):
 
 ```bash
 python seed_db.py
@@ -84,9 +86,11 @@ Open **http://127.0.0.1:5000** in your browser.
 
 ## API Endpoints
 
-### POST `/ask` — Single question
+POSTs to `/ask` return a single question.
 
-Fetches the prompt template from MongoDB, calls the LLM, saves the result to history, and returns the response.
+POSTs on `/ask` will return 1 question.
+
+Retrieves prompt template from MongoDB, invokes LLM and adds the response to history then returns response.
 
 **Request:**
 ```json
@@ -100,9 +104,9 @@ Fetches the prompt template from MongoDB, calls the LLM, saves the result to his
 
 ---
 
-### POST `/ask-batch` — Multiple questions (async)
+### Multiple questions (async)
 
-Accepts a list of questions, processes each one **concurrently** using `asyncio.gather`, and returns responses in the same order.
+Takes a list of questions, runs them concurrently in the order they were given using `asyncio.gather`, and returns them in the same order.
 
 **Request:**
 ```json
@@ -120,7 +124,7 @@ Accepts a list of questions, processes each one **concurrently** using `asyncio.
 
 ### Collection: `prompts`
 
-Stores reusable LLM prompt templates.
+Stores ReUsable LLM prompt Templates.
 
 ```json
 {
@@ -131,7 +135,7 @@ Stores reusable LLM prompt templates.
 
 ### Collection: `history`
 
-Stores every request/response pair for auditing.
+Persists all request / response pairs to be audit logged.
 
 ```json
 {
@@ -146,7 +150,7 @@ Stores every request/response pair for auditing.
 
 ## Design Decisions
 
-- **Groq instead of OpenAI** — Groq provides a fully compatible API with significantly faster inference. The FAQ explicitly states any LLM alternative is acceptable.
-- **Async batch processing** — `AsyncGroq` with `asyncio.gather` fires all LLM calls simultaneously, so N questions take roughly the same time as 1 instead of N×1.
-- **Prompt stored in MongoDB** — Decouples the prompt from code; templates can be updated without a redeploy.
-- **history collection** — Every request/response is persisted with a UTC timestamp for full auditability.
+- Groq over OpenAI: fully compatible API with much faster inference. The FAQ clearly states that any alternative of LLM is acceptable.
+- With Async batch processing, `AsyncGroq` launches all LLM calls at the same time using `asyncio.gather`, meaning that N questions take about 1 time rather than N×1.
+- **Prompt stored in MongoDB** — Separates prompt from code, templates can be updated without redeploy.
+- All requests/response are stored with a UTC timestamp for complete auditing purposes.
