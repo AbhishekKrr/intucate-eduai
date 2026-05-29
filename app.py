@@ -19,7 +19,7 @@ app = Flask(__name__)
 
 # ── Database setup ──────────────────────────────────────────────────────────
 # Connect to MongoDB Atlas using the URI from the .env file
-mongo_client = MongoClient(os.getenv("MONGO_URI", "mongodb://localhost:27017/"))
+mongo_client = MongoClient(os.getenv("MONGO_URI", "mongodb://localhost:27017/"), serverSelectionTimeoutMS=5000)
 db = mongo_client["intucate"]
 
 # 'prompts' collection: Contains re-usable prompt templates keyed by _id
