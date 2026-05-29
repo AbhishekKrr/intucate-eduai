@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EduAI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f9f9fb;
+      --white: #ffffff;
+      --border: #e8e8ed;
+      --text: #111118;
+      --muted: #8a8a9a;
+      --accent: #5b5bd6;
+      --accent-light: #f0f0ff;
+      --radius: 12px;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Header ── */
+    header {
+      padding: 0 40px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+    }
+    .logo {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 1rem; font-weight: 700; color: var(--text);
+    }
+    .logo-icon {
+      width: 30px; height: 30px;
+      background: var(--accent);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+    }
+    .status {
+      display: flex; align-items: center; gap: 7px;
+      font-size: 0.78rem; color: var(--muted);
+    }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: #22c55e; }
+
+    /* ── Layout ── */
+    .layout {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      max-width: 1080px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 36px 24px;
+      gap: 24px;
+    }
+
+    /* ── Left ── */
+    .left { display: flex; flex-direction: column; gap: 16px; }
+
+    .page-title { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.4px; }
+    .page-sub   { font-size: 0.85rem; color: var(--muted); margin-top: 4px; }
+
+    /* ── Tabs ── */
+    .tabs {
+      display: flex;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--white);
+      overflow: hidden;
+    }
+    .tab {
+      flex: 1; padding: 10px;
+      border: none; background: transparent;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.83rem; font-weight: 500;
+      color: var(--muted); cursor: pointer;
+      transition: all 0.15s;
+    }
+    .tab.active {
+      background: var(--accent);
+      color: #fff;
+    }
+    .tab:not(.active):hover { background: var(--bg); color: var(--text); }
+
+    /* ── Card ── */
+    .card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+    .label {
+      font-size: 0.72rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.8px;
+      color: var(--muted); margin-bottom: 10px;
+    }
+
+    textarea {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem; line-height: 1.6;
+      padding: 12px 14px;
+      resize: vertical; min-height: 96px; outline: none;
+      transition: border-color 0.15s;
+    }
+    textarea::placeholder { color: #bbbbc8; }
+    textarea:focus { border-color: var(--accent); background: var(--white); }
+
+    .hint { font-size: 0.72rem; color: var(--muted); margin-top: 8px; }
+    kbd {
+      background: var(--border); border-radius: 4px;
+      padding: 1px 5px; font-size: 0.68rem; font-family: inherit;
+    }
+
+    /* ── Batch ── */
+    .batch-list { display: flex; flex-direction: column; gap: 8px; }
+    .batch-row  { display: flex; gap: 8px; align-items: flex-start; }
+    .num {
+      min-width: 24px; height: 24px;
+      background: var(--accent-light); color: var(--accent);
+      border-radius: 6px; font-size: 0.7rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      margin-top: 12px; flex-shrink: 0;
+    }
+    .batch-row textarea { min-height: 58px; }
+    .rm { background: none; border: none; color: var(--border); cursor: pointer; font-size: 1rem; padding: 6px 2px; margin-top: 10px; transition: color 0.15s; }
+    .rm:hover { color: #ef4444; }
+    .add-btn {
+      width: 100%; padding: 9px;
+      background: transparent; border: 1px dashed var(--border);
+      border-radius: 8px; color: var(--muted);
+      font-family: 'Inter', sans-serif; font-size: 0.82rem;
+      cursor: pointer; transition: all 0.15s; margin-top: 4px;
+    }
+    .add-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+
+    /* ── Submit ── */
+    .btn {
+      width: 100%; padding: 12px;
+      background: var(--accent); border: none;
+      border-radius: var(--radius); color: #fff;
+      font-family: 'Inter', sans-serif; font-size: 0.9rem; font-weight: 600;
+      cursor: pointer; transition: all 0.15s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn:hover:not(:disabled) { background: #4a4abf; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .spinner {
+      width: 15px; height: 15px;
+      border: 2px solid rgba(255,255,255,0.35);
+      border-top-color: #fff; border-radius: 50%;
+      animation: spin 0.65s linear infinite; display: none;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Section toggle ── */
+    .section { display: none; flex-direction: column; gap: 14px; }
+    .section.active { display: flex; }
+
+    /* ── Right ── */
+    .right { display: flex; flex-direction: column; gap: 14px; }
+    .right-header {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .right-header h2 { font-size: 0.9rem; font-weight: 600; }
+    .clear { font-size: 0.75rem; color: var(--muted); background: none; border: none; cursor: pointer; transition: color 0.15s; }
+    .clear:hover { color: #ef4444; }
+
+    .resp-list {
+      display: flex; flex-direction: column; gap: 12px;
+      overflow-y: auto; max-height: calc(100vh - 240px);
+      padding-right: 2px;
+    }
+    .resp-list::-webkit-scrollbar { width: 3px; }
+    .resp-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* ── Response card ── */
+    .r-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      animation: fadeUp 0.2s ease;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .r-type {
+      font-size: 0.68rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.7px; color: var(--accent);
+      margin-bottom: 8px;
+    }
+    .r-q {
+      font-size: 0.8rem; color: var(--muted);
+      padding: 7px 10px; background: var(--bg);
+      border-left: 2px solid var(--accent);
+      border-radius: 0 6px 6px 0;
+      margin-bottom: 10px;
+    }
+    .r-a {
+      font-size: 0.85rem; line-height: 1.7; color: var(--text);
+      white-space: pre-wrap;
+    }
+    .r-divider { border: none; border-top: 1px solid var(--border); margin: 10px 0; }
+    .r-time { font-size: 0.68rem; color: var(--muted); margin-top: 10px; }
+
+    /* ── Skeleton ── */
+    .sk {
+      height: 11px; border-radius: 4px; margin-bottom: 7px;
+      background: linear-gradient(90deg, var(--bg) 25%, var(--border) 50%, var(--bg) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.2s infinite;
+    }
+    .sk.w75 { width: 75%; } .sk.w55 { width: 55%; } .sk.w40 { width: 40%; }
+    @keyframes shimmer { to { background-position: -200% 0; } }
+
+    /* ── Empty ── */
+    .empty {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 50px 20px; gap: 10px; text-align: center; color: var(--muted);
+    }
+    .empty-icon { font-size: 2rem; opacity: 0.35; }
+    .empty p { font-size: 0.8rem; line-height: 1.5; }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: #111; color: #fff;
+      padding: 10px 16px; border-radius: 8px;
+      font-size: 0.82rem; font-weight: 500;
+      transform: translateY(70px); transition: transform 0.25s ease;
+      z-index: 99; max-width: 280px;
+    }
+    .toast.show { transform: translateY(0); }
+
+    @media (max-width: 780px) {
+      .layout { grid-template-columns: 1fr; padding: 20px 16px; }
+      .resp-list { max-height: 360px; }
+      header { padding: 0 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">🎓</div>
+    EduAI
+  </div>
+  <div class="status">
+    <div class="dot"></div>
+    Llama 3.3 · Groq
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- Left -->
+  <div class="left">
+    <div>
+      <div class="page-title">Education Assistant</div>
+      <div class="page-sub">Ask any education-related question and get an expert AI answer.</div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('single')">Single Question</button>
+      <button class="tab" onclick="switchTab('batch')">Batch Questions</button>
+    </div>
+
+    <!-- Single -->
+    <div class="section active" id="sec-single">
+      <div class="card">
+        <div class="label">Your question</div>
+        <textarea id="single-input" placeholder="e.g. How much should I score to pass CA final?"></textarea>
+        <div class="hint">Press <kbd>Ctrl + Enter</kbd> to submit</div>
+      </div>
+      <button class="btn" id="single-btn" onclick="submitSingle()">
+        <div class="spinner" id="single-spinner"></div>
+        <span id="single-text">Ask EduAI</span>
+      </button>
+    </div>
+
+    <!-- Batch -->
+    <div class="section" id="sec-batch">
+      <div class="card">
+        <div class="label">Your questions</div>
+        <div class="batch-list" id="batch-list">
+          <div class="batch-row">
+            <div class="num">1</div>
+            <textarea placeholder="Question 1..." rows="2"></textarea>
+            <button class="rm" onclick="removeRow(this)">✕</button>
+          </div>
+          <div class="batch-row">
+            <div class="num">2</div>
+            <textarea placeholder="Question 2..." rows="2"></textarea>
+            <button class="rm" onclick="removeRow(this)">✕</button>
+          </div>
+        </div>
+        <button class="add-btn" onclick="addRow()">+ Add question</button>
+      </div>
+      <button class="btn" id="batch-btn" onclick="submitBatch()">
+        <div class="spinner" id="batch-spinner"></div>
+        <span id="batch-text">Ask All</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Right -->
+  <div class="right">
+    <div class="right-header">
+      <h2>Responses</h2>
+      <button class="clear" onclick="clearAll()">Clear</button>
+    </div>
+    <div class="resp-list" id="resp-list">
+      <div class="empty" id="empty-state">
+        <div class="empty-icon">💬</div>
+        <p>Responses will appear here.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  let uid = 0;
+
+  function switchTab(mode) {
+    document.querySelectorAll('.tab').forEach((b, i) =>
+      b.classList.toggle('active', (mode === 'single') ? i === 0 : i === 1)
+    );
+    document.getElementById('sec-single').classList.toggle('active', mode === 'single');
+    document.getElementById('sec-batch').classList.toggle('active', mode === 'batch');
+  }
+
+  function addRow() {
+    const list = document.getElementById('batch-list');
+    const n = list.children.length + 1;
+    const row = document.createElement('div');
+    row.className = 'batch-row';
+    row.innerHTML = `
+      <div class="num">${n}</div>
+      <textarea placeholder="Question ${n}..." rows="2"></textarea>
+      <button class="rm" onclick="removeRow(this)">✕</button>`;
+    list.appendChild(row);
+    renumber();
+    row.querySelector('textarea').focus();
+  }
+
+  function removeRow(btn) {
+    if (document.getElementById('batch-list').children.length <= 1) { toast('Need at least one question.'); return; }
+    btn.closest('.batch-row').remove();
+    renumber();
+  }
+
+  function renumber() {
+    document.querySelectorAll('.batch-row').forEach((r, i) => {
+      r.querySelector('.num').textContent = i + 1;
+      r.querySelector('textarea').placeholder = `Question ${i + 1}...`;
+    });
+  }
+
+  async function submitSingle() {
+    const val = document.getElementById('single-input').value.trim();
+    if (!val) { toast('Please enter a question.'); return; }
+    setLoad('single', true);
+    const id = skelCard(val, false);
+    try {
+      const r = await fetch('/ask', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userInput: val })
+      });
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.error || 'Something went wrong');
+      fillSingle(id, val, d.response);
+      document.getElementById('single-input').value = '';
+    } catch (e) {
+      removeSkel(id); toast(e.message);
+    } finally {
+      setLoad('single', false);
+    }
+  }
+
+  async function submitBatch() {
+    const inputs = [...document.querySelectorAll('#batch-list textarea')]
+      .map(t => t.value.trim()).filter(Boolean);
+    if (!inputs.length) { toast('Please enter at least one question.'); return; }
+    setLoad('batch', true);
+    const id = skelCard(`${inputs.length} questions`, true);
+    try {
+      const r = await fetch('/ask-batch', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userInputs: inputs })
+      });
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.error || 'Something went wrong');
+      fillBatch(id, inputs, d.responses);
+    } catch (e) {
+      removeSkel(id); toast(e.message);
+    } finally {
+      setLoad('batch', false);
+    }
+  }
+
+  function hideEmpty() {
+    const el = document.getElementById('empty-state');
+    if (el) el.style.display = 'none';
+  }
+
+  function skelCard(label, isBatch) {
+    hideEmpty();
+    const id = 'c' + (++uid);
+    const el = document.createElement('div');
+    el.id = id; el.className = 'r-card';
+    el.innerHTML = `
+      <div class="r-type">${isBatch ? 'Batch' : 'Single'} · ${esc(label)}</div>
+      <div class="sk"></div><div class="sk w75"></div>
+      <div class="sk w55"></div><div class="sk w40"></div>`;
+    document.getElementById('resp-list').prepend(el);
+    return id;
+  }
+
+  function fillSingle(id, q, ans) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.innerHTML = `
+      <div class="r-type">Single</div>
+      <div class="r-q">${esc(q)}</div>
+      <div class="r-a">${esc(ans)}</div>
+      <div class="r-time">${now()}</div>`;
+  }
+
+  function fillBatch(id, qs, rs) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    let html = `<div class="r-type">Batch · ${qs.length} responses</div>`;
+    qs.forEach((q, i) => {
+      html += `${i > 0 ? '<hr class="r-divider">' : ''}
+        <div class="r-q"><strong>#${i+1}</strong> &nbsp;${esc(q)}</div>
+        <div class="r-a">${esc(rs[i] || '')}</div>`;
+    });
+    html += `<div class="r-time">${now()}</div>`;
+    el.innerHTML = html;
+  }
+
+  function removeSkel(id) {
+    const el = document.getElementById(id);
+    if (el) el.remove();
+    if (!document.querySelector('.r-card'))
+      document.getElementById('empty-state').style.display = '';
+  }
+
+  function clearAll() {
+    document.getElementById('resp-list').innerHTML = `
+      <div class="empty" id="empty-state">
+        <div class="empty-icon">💬</div>
+        <p>Responses will appear here.</p>
+      </div>`;
+  }
+
+  function setLoad(mode, on) {
+    document.getElementById(`${mode}-btn`).disabled = on;
+    document.getElementById(`${mode}-spinner`).style.display = on ? 'block' : 'none';
+    document.getElementById(`${mode}-text`).textContent = on
+      ? (mode === 'single' ? 'Thinking...' : 'Processing...')
+      : (mode === 'single' ? 'Ask EduAI' : 'Ask All');
+  }
+
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  function esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function now() {
+    return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  }
+
+  document.getElementById('single-input').addEventListener('keydown', e => {
+    if (e.ctrlKey && e.key === 'Enter') submitSingle();
+  });
+</script>
+</body>
+</html>
